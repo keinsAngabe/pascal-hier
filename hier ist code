@@ -1,0 +1,103 @@
+from datetime import date
+
+class person:
+    def __init__(self, lastname, firstname, geburtstag):
+        self.__lastname = lastname
+        self.__firstname = firstname
+        self.__geburtstag: date = geburtstag
+
+    @property
+    def lastname(self):
+        return self.__lastname
+    @lastname.setter
+    def lastname(self, lastname):
+        self.__lastname = lastname
+
+    @property
+    def firstname(self):
+        return self.__firstname
+    @firstname.setter
+    def firstname(self, firstname):
+        self.__firstname = firstname
+
+    @property
+    def geburtstag(self):
+        return self.__geburtstag
+    @geburtstag.setter
+    def geburtstag(self, geburtstag):
+        self.__geburtstag = geburtstag
+
+    def __str__(self):
+        return f"{self.__firstname};{self.__lastname};{self.__geburtstag}"
+
+class Personendatenbank:
+    def __init__(self):
+        self.__personen = []
+
+    @property
+    def get(self):
+        for i in self.__personen:
+            print(str(i))
+
+    def einfügen(self, person):
+        self.__personen.append(person)
+        
+    def speichere(self, dateiname):
+        dateiname += ".csv"
+        datei = open(dateiname,"a")
+        for i in self.__personen:
+            datei.write(str(i) + "\n")
+        datei.close
+
+    def lade(self, dateiname):
+        dateiname += ".csv"
+        datei = open(dateiname,"r", encoding="utf-8")
+        while True:
+            line = datei.readline()
+            if line == "":
+                break
+            persn = line.split(";")
+            self.einfügen(person(persn[1],persn[0],persn[2]))
+        datei.close
+
+    def findePerson(self, name, vorname):
+        for i in self.__personen:
+            if i.lastname == name and i.firstname == vorname:
+                return i
+        return None
+
+datenbank = Personendatenbank()
+while True:
+    user = input(""" 
+        Wähle eine Option:
+        a. Person einfügen
+        b. Person finden
+        c. Datenbank aus Datei laden
+        d. Datenbank in Datei speichern
+        e. Programm verlassen
+        """)
+    if user == "e":
+        break
+    elif user == "a":
+        nachname = input("Gebe Nachname: ")
+        vorname = input("Gebe Vorname: ")
+        datum = input("Gebe Datum: ")
+        datenbank.einfügen(person(nachname, vorname, datum))
+    elif user == "b":
+        nachname = input("Gebe Nachname: ")
+        vorname = input("Gebe Vorname: ")
+        test = datenbank.findePerson(nachname, vorname)
+        if test == None:
+            print("Person not found")
+        else:
+            print(str(test))
+    elif user == "c":
+        name = input("Gebe Dateiname: ")
+        datenbank.lade(name)
+    elif user == "d":
+        name = input("Welcher Name soll die Datei haben? ")
+        datenbank.speichere(name)
+    elif user == "test":
+        print(datenbank.get)
+    else:
+        print("An error occured!")
